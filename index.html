@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <title>北海道スノボ旅行プラン</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card: #111827;
+      --accent: #38bdf8;
+      --accent-soft: rgba(56, 189, 248, 0.15);
+      --text-main: #e5e7eb;
+      --text-sub: #9ca3af;
+      --danger: #fb7185;
+      --safe: #4ade80;
+    }
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top, #1f2937 0, #020617 55%);
+      color: var(--text-main);
+    }
+    .app {
+      max-width: 480px;
+      margin: 0 auto;
+      padding: 16px 14px 24px;
+    }
+    header {
+      padding: 8px 4px 16px;
+    }
+    .trip-title {
+      font-size: 1.4rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+    .trip-sub {
+      margin-top: 4px;
+      font-size: 0.85rem;
+      color: var(--text-sub);
+    }
+    .chip-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 10px;
+    }
+    .chip {
+      font-size: 0.75rem;
+      padding: 4px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.4);
+      color: var(--text-sub);
+      background: rgba(15, 23, 42, 0.8);
+    }
+    .today-banner {
+      margin-top: 14px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, rgba(56, 189, 248, 0.18), rgba(37, 99, 235, 0.18));
+      border: 1px solid rgba(56, 189, 248, 0.5);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .today-icon {
+      width: 28px;
+      height: 28px;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.9);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9rem;
+    }
+    .today-main {
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+    .today-sub {
+      font-size: 0.75rem;
+      color: var(--text-sub);
+    }
+
+    .tab-group {
+      margin-top: 18px;
+      display: flex;
+      gap: 6px;
+      background: rgba(15, 23, 42, 0.8);
+      padding: 4px;
+      border-radius: 999px;
+      border: 1px solid rgba(31, 41, 55, 0.9);
+    }
+    .tab-btn {
+      flex: 1;
+      font-size: 0.8rem;
+      padding: 6px 4px;
+      border-radius: 999px;
+      border: none;
+      background: transparent;
+      color: var(--text-sub);
+      font-weight: 500;
+    }
+    .tab-btn.active {
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    section {
+      margin-top: 18px;
+    }
+    .section-title {
+      font-size: 0.95rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-sub);
+      margin-bottom: 8px;
+    }
+    .card {
+      background: var(--card);
+      border-radius: 14px;
+      padding: 10px 11px;
+      border: 1px solid rgba(31, 41, 55, 0.9);
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.55);
+    }
+    .card + .card {
+      margin-top: 10px;
+    }
+
+    .group-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      font-size: 0.85rem;
+      margin-bottom: 4px;
+    }
+    .group-label {
+      color: var(--text-sub);
+    }
+    .group-names {
+      font-weight: 500;
+    }
+
+    .day-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 6px;
+    }
+    .day-title {
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+    .day-sub {
+      font-size: 0.75rem;
+      color: var(--text-sub);
+    }
+    .timeline {
+      margin-top: 6px;
+      border-left: 1px solid rgba(55, 65, 81, 0.9);
+      padding-left: 10px;
+    }
+    .time-block {
+      margin-bottom: 8px;
+      position: relative;
+    }
+    .time-dot {
+      position: absolute;
+      left: -11px;
+      top: 3px;
+      width: 9px;
+      height: 9px;
+      border-radius: 999px;
+      background: var(--accent);
+      box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.15);
+    }
+    .time-label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
+    .time-main {
+      font-size: 0.85rem;
+    }
+    .time-note {
+      font-size: 0.75rem;
+      color: var(--text-sub);
+    }
+
+    .accordion {
+      margin-top: 8px;
+    }
+    .acc-item {
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid rgba(31, 41, 55, 0.9);
+      background: rgba(15, 23, 42, 0.9);
+      margin-bottom: 6px;
+    }
+    .acc-header {
+      padding: 8px 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.85rem;
+      cursor: pointer;
+    }
+    .acc-header span {
+      color: var(--text-sub);
+    }
+    .acc-header strong {
+      color: var(--text-main);
+    }
+    .acc-toggle {
+      font-size: 0.8rem;
+      color: var(--accent);
+    }
+    .acc-body {
+      padding: 6px 10px 8px;
+      font-size: 0.8rem;
+      border-top: 1px solid rgba(31, 41, 55, 0.9);
+      display: none;
+    }
+    .acc-item.open .acc-body {
+      display: block;
+    }
+
+    .memo-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.8rem;
+      margin-bottom: 4px;
+    }
+    .memo-label {
+      color: var(--text-sub);
+    }
+    .memo-value {
+      font-weight: 500;
+    }
+    .badge {
+      display: inline-block;
+      padding: 2px 6px;
+      border-radius: 999px;
+      font-size: 0.7rem;
+      border: 1px solid rgba(148, 163, 184, 0.5);
+      margin-left: 4px;
+    }
+    .badge-danger {
+      border-color: var(--danger);
+      color: var(--danger);
+    }
+
+    a {
+      color: var(--accent);
+      font-size: 0.8rem;
+      word-break: break-all;
+    }
+
+    footer {
+      margin-top: 20px;
+      font-size: 0.7rem;
+      color: var(--text-sub);
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <div class="trip-title">HOKKAIDO SNOWBOARD TRIP</div>
+    <div class="trip-sub">1/22(金)〜1/25(月) 北海道スノボ旅行</div>
+    <div class="chip-row">
+      <div class="chip">定山渓ビューホテル</div>
+      <div class="chip">キロロスノーワールド</div>
+      <div class="chip">ルスツリゾート</div>
+      <div class="chip">アパホテル札幌すすきの駅前</div>
+    </div>
+
+    <div class="today-banner">
+      <div class="today-icon">📅</div>
+      <div>
+        <div class="today-main">タブで自分の動きを確認</div>
+        <div class="today-sub">金曜出発組 / 土曜出発組 / 全員</div>
+      </div>
+    </div>
+
+    <div class="tab-group">
+      <button class="tab-btn active" data-tab="fri">金曜出発組</button>
+      <button class="tab-btn" data-tab="sat">土曜出発組</button>
+      <button class="tab-btn" data-tab="all">全員</button>
+    </div>
+  </header>
+
+  <!-- 金曜出発組タブ：金曜出発組 + 全員 -->
+  <section id="tab-fri">
+    <div class="section-title">GROUP</div>
+    <div class="card">
+      <div class="group-row">
+        <div class="group-label">金曜出発組</div>
+        <div class="group-names">松本 / だいき / しょうた</div>
+      </div>
+    </div>
+
+    <div class="section-title">1/22(金) 羽田 → 定山渓</div>
+    <div class="card">
+      <div class="day-header">
+        <div class="day-title">移動日 &amp; 前泊</div>
+        <div class="day-sub">羽田空港 → 新千歳 → 定山渓ビューホテル</div>
+      </div>
+      <div class="timeline">
+        <div class="time-block">
+          <div class="time-dot"></div>
+          <div class="time-label">16:50</div>
+          <div class="time-main">羽田空港発</div>
+          <div class="time-note">飛行機移動</div>
+        </div>
+        <div class="time-block">
+          <div class="time-dot"></div>
+          <div class="time-label">18:30</div>
+          <div class="time-main">新千歳空港着</div>
+          <div class="time-note">レンタカー手続き(21:00〆) / 移動(約1.5h) / 食事</div>
+        </div>
+        <div class="time-block">
+          <div class="time-dot"></div>
+          <div class="time-label">22:00</div>
+          <div class="time-main">定山渓ビューホテル着</div>
+          <div class="time-note">チェックイン / サウナ / 就寝</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-title">1/23(土) キロロスノーワールド</div>
+    <div class="card">
+      <div class="day-header">
+        <div class="day-title">朝移動 → スノボ</div>
+        <div class="day-sub">定山渓ビューホテル → キロロ</div>
+      </div>
+      <div class="timeline">
+        <div class="time-block">
+          <div class="time-dot"></div>
+          <div class="time-label">06:30</div>
+          <div class="time-main">定山渓ビューホテル発</div>
+        </div>
+        <div class="time-block">
+          <div class="time-dot"></div>
+          <div class="time-label">07:50</div>
+          <div class="time-main">キロロスノーワールド着</div>
+          <div class="time-note">着替え</div>
+        </div>
+        <div class="time-block">
+          <div class="time-dot"></div>
+          <div class="time-label">08:30〜</div>
+          <div class="time-main">スノボ / 土曜出発組と合流予定</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-title">全員の予定</div>
+
+    <div class="card">
+      <div class="day-header">
+        <div class="day-title">1/23(土) キロロ → 定山渓</div>
+        <div class="day-sub">全員行動</div>
+      </div>
+      <div class="timeline">
+        <div class="time-block">
+          <div class="time-dot"></div>
+          <div class="time-label">15:30</div>
+          <div class="time-main">キロロスノーワールド発</div>
+        </div>
+        <div class="time-block">
+          <div class="time-dot"></div>
+          <div class="time-label">16:40</div>
+          <div class="time-main">定山渓ビューホテル着</div>
+          <div class="time-note">チェックイン / サウナ</div>
+        </div>
+        <div class="time-block">
+          <div class="time-dot"></div>
+          <div class="time-label">18:00〜20:00</div>
+          <div class="time-main">ホテルのビュッフェ</div>
+          <div class="time-note"><span class="badge badge-danger">時間厳守 / 爆飲まない</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="day-header">
+        <div class="day-title">1/24(日) ルスツ → 札幌</div>
+        <div class="day-sub">全員行動</div>
+      </div>
+      <div class="timeline">
+        <div class="time-block">
+          <div class="time-dot"></div>
+          <div class="time-label">07:20</div>
+          <div class="time-main">定山渓ビューホテル発 (チェックアウト)</div>
+        </div>
+        <div class="time-block">
+          <div class="time-dot"></div>
+          <div class="time-label">08:20</div>
+          <div class="time-main">ルスツリゾート着</div>
+          <div class="time-note">着替え</div>
+        </div>
+        <div class="time-block">
+          <div class="time-dot"></div>
+          <div class="time-label">09:00〜</div>
+          <div class="time-main">スノボ / ルスツリゾートの温泉</div>
+        </div>
+        <div class="time-block">
+          <div class="time-dot"></div>
+          <div class="time-label">17:00</div>
+          <div class="time-main">ルスツリゾート発</div>
+        </div>
+        <div class="time-block">
+          <div class="time-dot"></div>
+          <div class="time-label">18:30</div>
+          <div class="time-main">アパホテル札幌すすきの駅前着</div>
+          <div class="time-note">チェックイン / 荷物整理</div>
+        </div>
+        <div class="time-block">
+          <div class="time-dot"></div>
+          <div class="time-label">19:00</div>
+          <div class="time-main">生ラムジンギスカン 山小屋</div>
+          <div class="time-note"><span class="badge badge-danger">爆飲みすぎない</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="day-header">
+        <div class="day-title">1/25(月) 札幌 → 新千歳 → 羽田</div>
+        <div class="day-sub">全員行動</div>
+      </div>
+      <div class="timeline">
+        <div class="time-block">
+          <div class="time-dot"></div>
+          <div class="time-label">10:00</div>
+          <div class="time-main">アパホテル札幌すすきの駅前発 (チェックアウト)</div>
+          <div class="time-note">スノボ発送手続き / 移動</div>
+        </div>
+        <div class="time-block">
+          <div class="time-dot"></div>
+          <div class="time-label">15:00</div>
+          <div class="time-main">札幌出発</div>
+        </div>
+        <div class="time-block">
+          <div class="time-dot"></div>
+          <div class="time-label">16:00</div>
+          <div class="time-main">ニッポンレンタカー</div>
+          <div class="time-note">レンタカー返却 / 空港へ移動</div>
+        </div>
+        <div class="time-block">
+          <div class="time-dot"></div>
+          <div class="time-label">16:30</div>
+          <div class="time-main">新千歳空港着</div>
+          <div class="time-note">ラーメン道場 / お土産 / 搭乗手続き</div>
+        </div>
+        <div class="time-block">
+          <div class="time-dot"></div>
+          <div class="time-label">18:00</div>
+          <div class="time-main">新千歳空港発</div>
+          <div class="time-note">飛行機移動</div>
+        </div>
+        <div class="time-block">
+          <div class="time-dot"></div>
+          <div class="time-label">19:45</div>
+          <div class="time-main">羽田空港着</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 土曜出発組タブ：土曜出発組 + 全員 -->
+  <section id="tab-sat" style="display:none;">
+    <div class="section-title">GROUP</div>
+    <div class="card">
+      <div class="group-row">
+        <div class="group-label">土曜出発組</div>
+        <div class="group-names">りょうが / かずき</div>
+      </div>
+    </div>
+
+    <div class="section-title">1/23(土) 羽田 → キロロ</div>
+    <div class="card">
+      <div class="day-header">
+        <div class="day-title">早朝移動 → 合流</div>
+        <div class="day-sub">羽田空港 → 新千歳 → キロロ</div>
+      </div>
+      <div class="timeline">
+        <div class="time-block">
+          <div class="time-dot"></div>
+          <div class="time-label">06:25</div>
+          <div class="time-main">羽田空港発</div>
+          <div class="time-note">飛行機移動</div>
+        </div>
+        <div class="time-block">
+          <div class="time-dot"></div>
+          <div class="time-label">07:55</div>
+          <div class="time-main">新千歳空港着</div>
+          <div class="time-note">レンタカー手続き / 移動(約1.5h)</div>
+        </div>
+        <div class="time-block">
+          <div class="time-dot"></div>
+          <div class="time-label">11:00</div>
+          <div class="time-main">キロロスノーワールド着</div>
+          <div class="time-note">金曜出発組と合流 / スノボ</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-title">全員の予定</div>
+
+    <div class="card">
+      <div class="day-header">
+        <div class="day-title">1/23(土) キロロ → 定山渓</div>
+        <div class="day-sub">全員行動</div>
+      </div>
+      <div class="timeline">
+        <div class="time-block">
+          <div class="time-dot"></div>
+          <div class="time-label">15:30</div>
+          <div class="time-main">キロロスノーワールド発</div>
+        </div>
+        <div class="time-block">
+          <div class="time-dot"></div>
+          <div class="time-label">16:40</div>
+          <div class="time-main">定山渓ビューホテル着</div>
+          <div class="time-note">チェックイン / サウナ</div>
+        </div>
+        <div class="time-block">
+          <div class="time-dot"></div>
+          <div class="time-label">18:00〜20:00</div>
+          <div class="time-main">ホテルのビュッフェ</div>
+          <div class="time-note"><span class="badge badge-danger">時間厳守 / 爆飲まない</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="day-header">
+        <div class="day-title">1/24(日) ルスツ → 札幌</div>
+        <div class="day-sub">全員行動</div>
+      </div>
+      <div class="timeline">
+        <div class="time-block">
+          <div class="time-dot"></div>
+          <div class="time-label">07:20</div>
+          <div class="time-main">定山渓ビューホテル発 (チェックアウト)</div>
+        </div>
+        <div class="time-block">
+          <div class="time-dot"></div>
+          <div class="time-label">08:20</div>
+          <div class="time-main">ルスツリゾート着</div>
+          <div class="time-note">着替え</div>
+        </div>
+        <div class="time-block">
+          <div class="time-dot"></div>
+          <div class="time-label">09:00〜</div>
+          <div class="time-main">スノボ / ルスツリゾートの温泉</div>
+        </div>
+        <div class="time-block">
+          <div class="time-dot"></div>
+          <div class="time-label">17:00</div>
+          <div class="time-main">ルスツリゾート発</div>
+        </div>
+        <div class="time-block">
+          <div class="time-dot"></div>
+          <div class="time-label">18:30</div>
+          <div class="time-main">アパホテル札幌すすきの駅前着</div>
+          <div class="time-note">チェックイン / 荷物整理</div>
+        </div>
+        <div class="time-block">
+          <div class="time-dot"></div>
+          <div class="time-label">19:00</div>
+          <div class="time-main">生ラムジンギスカン 山小屋</div>
+          <div class="time-note"><span class="badge badge-danger">爆飲みすぎない</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="day-header">
+        <div class="day-title">1/25(月) 札幌 → 新千歳 → 羽田</div>
+        <div class="day-sub">全員行動</div>
+      </div>
+      <div class="timeline">
+        <div class="time-block">
+          <div class="time-dot"></div>
+          <div class="time-label">10:00</div>
+          <div class="time-main">アパホテル札幌すすきの駅前発 (チェックアウト)</div>
+          <div class="time-note">スノボ発送手続き / 移動</div>
+        </div>
+        <div class="time-block">
+          <div class="time-dot"></div>
+          <div class="time-label">15:00</div>
+          <div class="time-main">札幌出発</div>
+        </div>
+        <div class="time-block">
+          <div class="time-dot"></div>
+          <div class="time-label">16:00</div>
+          <div class="time-main">ニッポンレンタカー</div>
+          <div class="time-note">レンタカー返却 / 空港へ移動</div>
+        </div>
+        <div class="time-block">
+          <div class="time-dot"></div>
+          <div class="time-label">16:30</div>
+          <div class="time-main">新千歳空港着</div>
+          <div class="time-note">ラーメン道場 / お土産 / 搭乗手続き</div>
+        </div>
+        <div class="time-block">
+          <div class="time-dot"></div>
+          <div class="time-label">18:00</div>
+          <div class="time-main">新千歳空港発</div>
+          <div class="time-note">飛行機移動</div>
+        </div>
+        <div class="time-block">
+          <div class="time-dot"></div>
+          <div class="time-label">19:45</div>
+          <div class="time-main">羽田空港着</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 全員タブ：全員のみ -->
+  <section id="tab-all" style="display:none;">
+    <div class="section-title">全員の予定</div>
+
+    <div class="card">
+      <div class="day-header">
+        <div class="day-title">1/23(土) キロロ → 定山渓</div>
+        <div class="day-sub">全員行動</div>
+      </div>
+      <div class="timeline">
+        <div class="time-block">
+          <div class="time-dot"></div>
+          <div class="time-label">15:30</div>
+          <div class="time-main">キロロスノーワールド発</div>
+        </div>
+        <div class="time-block">
+          <div class="time-dot"></div>
+          <div class="time-label">16:40</div>
+          <div class="time-main">定山渓ビューホテル着</div>
+          <div class="time-note">チェックイン / サウナ</div>
+        </div>
+        <div class="time-block">
+          <div class="time-dot"></div>
+          <div class="time-label">18:00〜20:00</div>
+          <div class="time-main">ホテルのビュッフェ</div>
+          <div class="time-note"><span class="badge badge-danger">時間厳守 / 爆飲まない</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="day-header">
+        <div class="day-title">1/24(日) ルスツ → 札幌</div>
+        <div class="day-sub">全員行動</div>
+      </div>
+      <div class="timeline">
+        <div class="time-block">
+          <div class="time-dot"></div>
+          <div class="time-label">07:20</div>
+          <div class="time-main">定山渓ビューホテル発 (チェックアウト)</div>
+        </div>
+        <div class="time-block">
+          <div class="time-dot"></div>
+          <div class="time-label">08:20</div>
+          <div class="time-main">ルスツリゾート着</div>
+          <div class="time-note">着替え</div>
+        </div>
+        <div class="time-block">
+          <div class="time-dot"></div>
+          <div class="time-label">09:00〜</div>
+          <div class="time-main">スノボ / ルスツリゾートの温泉</div>
+        </div>
+        <div class="time-block">
+          <div class="time-dot"></div>
+          <div class="time-label">17:00</div>
+          <div class="time-main">ルスツリゾート発</div>
+        </div>
+        <div class="time-block">
+          <div class="time-dot"></div>
+          <div class="time-label">18:30</div>
+          <div class="time-main">アパホテル札幌すすきの駅前着</div>
+          <div class="time-note">チェックイン / 荷物整理</div>
+        </div>
+        <div class="time-block">
+          <div class="time-dot"></div>
+          <div class="time-label">19:00</div>
+          <div class="time-main">生ラムジンギスカン 山小屋</div>
+          <div class="time-note"><span class="badge badge-danger">爆飲みすぎない</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="day-header">
+        <div class="day-title">1/25(月) 札幌 → 新千歳 → 羽田</div>
+        <div class="day-sub">全員行動</div>
+      </div>
+      <div class="timeline">
+        <div class="time-block">
+          <div class="time-dot"></div>
+          <div class="time-label">10:00</div>
+          <div class="time-main">アパホテル札幌すすきの駅前発 (チェックアウト)</div>
+          <div class="time-note">スノボ発送手続き / 移動</div>
+        </div>
+        <div class="time-block">
+          <div class="time-dot"></div>
+          <div class="time-label">15:00</div>
+          <div class="time-main">札幌出発</div>
+        </div>
+        <div class="time-block">
+          <div class="time-dot"></div>
+          <div class="time-label">16:00</div>
+          <div class="time-main">ニッポンレンタカー</div>
+          <div class="time-note">レンタカー返却 / 空港へ移動</div>
+        </div>
+        <div class="time-block">
+          <div class="time-dot"></div>
+          <div class="time-label">16:30</div>
+          <div class="time-main">新千歳空港着</div>
+          <div class="time-note">ラーメン道場 / お土産 / 搭乗手続き</div>
+        </div>
+        <div class="time-block">
+          <div class="time-dot"></div>
+          <div class="time-label">18:00</div>
+          <div class="time-main">新千歳空港発</div>
+          <div class="time-note">飛行機移動</div>
+        </div>
+        <div class="time-block">
+          <div class="time-dot"></div>
+          <div class="time-label">19:45</div>
+          <div class="time-main">羽田空港着</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 食事・観光候補 -->
+  <section>
+    <div class="section-title">食事候補 &amp; 観光候補</div>
+    <div class="card">
+      <div class="accordion">
+        <div class="acc-item open">
+          <div class="acc-header">
+            <span>食事候補</span>
+            <span class="acc-toggle">▼</span>
+          </div>
+          <div class="acc-body">
+            ・トリトン<br>
+            ・二条市場
+          </div>
+        </div>
+        <div class="acc-item">
+          <div class="acc-header">
+            <span>観光候補</span>
+            <span class="acc-toggle">▼</span>
+          </div>
+          <div class="acc-body">
+            ・ザ・センチュリオンサウナ レスト＆ステイ札幌 (サウナ)<br>
+            ・藻岩山ロープウェイ<br>
+            ・支笏湖氷濤まつり (期間外かも)
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ワリカ & スノボ発送 -->
+  <section>
+    <div class="section-title">ワリカ &amp; スノボ発送</div>
+    <div class="card">
+      <div class="memo-row">
+        <div class="memo-label">ワリカ</div>
+        <div class="memo-value">
+          <a href="https://walica.jp/group/01KRFXZQPJ45F9J448BDHW08Z2" target="_blank">ワリカリンク</a>
+        </div>
+      </div>
+
+      <div class="accordion">
+        <div class="acc-item">
+          <div class="acc-header">
+            <strong>金曜出発組 スノボ発送</strong>
+            <span class="acc-toggle">▼</span>
+          </div>
+          <div class="acc-body">
+            ・発送期間: 1/17(日)〜18(月)<br>
+            ・送付先: 定山渓ビューホテル フロント宛<br>
+            〒061-2302 札幌市南区定山渓温泉東2丁目111-3<br>
+            TEL: 011-598-3339<br><br>
+            備考欄へ『宿泊日』『ご予約名』を記入。<br>
+            事前にホテルへ連絡。<br>
+            着払い・代金引換は不可。
+          </div>
+        </div>
+        <div class="acc-item">
+          <div class="acc-header">
+            <strong>土曜出発組 スノボ発送</strong>
+            <span class="acc-toggle">▼</span>
+          </div>
+          <div class="acc-body">
+            ・発送期間: 1/18(月)〜19(火)<br>
+            ・送付先: キロロマウンテンセンター インフォメーションカウンター宛<br>
+            〒046-0593 北海道余市郡赤井川村字常盤128-1<br>
+            TEL: 0135-34-7171<br><br>
+            備考欄にご来場日を記入。<br>
+            利用日の2〜3日前着のみ。
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 宿泊メモ -->
+  <section>
+    <div class="section-title">宿泊メモ</div>
+    <div class="card">
+      <div class="memo-row">
+        <div class="memo-label">1泊目 (金→土)</div>
+        <div class="memo-value">定山渓ビューホテル</div>
+      </div>
+      <div class="memo-row">
+        <div class="memo-label">1人部屋</div>
+        <div class="memo-value">9,490円</div>
+      </div>
+      <div class="memo-row">
+        <div class="memo-label">2人部屋</div>
+        <div class="memo-value">15,610円</div>
+      </div>
+      <hr style="border:none;border-top:1px solid rgba(55,65,81,0.7);margin:8px 0;">
+      <div class="memo-row">
+        <div class="memo-label">2泊目 (土→日)</div>
+        <div class="memo-value">定山渓ビューホテル</div>
+      </div>
+      <div class="memo-row">
+        <div class="memo-label">1人部屋</div>
+        <div class="memo-value">13,963円</div>
+      </div>
+      <div class="memo-row">
+        <div class="memo-label">2人部屋</div>
+        <div class="memo-value">24,566円 ×2</div>
+      </div>
+      <hr style="border:none;border-top:1px solid rgba(55,65,81,0.7);margin:8px 0;">
+      <div class="memo-row">
+        <div class="memo-label">3泊目 (日→月)</div>
+        <div class="memo-value">アパホテル札幌すすきの駅前</div>
+      </div>
+      <div class="memo-row">
+        <div class="memo-label">2人部屋</div>
+        <div class="memo-value">8,595円</div>
+      </div>
+      <div class="memo-row">
+        <div class="memo-label">3人部屋</div>
+        <div class="memo-value">10,046円</div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    スマホで見やすい旅行用メモページ。<br>
+    タブで自分の出発組＋全員の動きが一目でわかります。
+  </footer>
+</div>
+
+<script>
+  const tabButtons = document.querySelectorAll('.tab-btn');
+  const sections = {
+    fri: document.getElementById('tab-fri'),
+    sat: document.getElementById('tab-sat'),
+    all: document.getElementById('tab-all')
+  };
+
+  tabButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const target = btn.dataset.tab;
+      tabButtons.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      Object.keys(sections).forEach(key => {
+        sections[key].style.display = key === target ? 'block' : 'none';
+      });
+    });
+  });
+
+  document.querySelectorAll('.acc-item').forEach(item => {
+    const header = item.querySelector('.acc-header');
+    header.addEventListener('click', () => {
+      item.classList.toggle('open');
+    });
+  });
+</script>
+</body>
+</html>
